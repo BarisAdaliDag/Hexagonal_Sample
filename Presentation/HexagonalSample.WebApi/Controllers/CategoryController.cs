@@ -1,41 +1,77 @@
-﻿using HexagonalSample.Application.DtoClasses.Categories;
+using HexagonalSample.Application.DtoClasses.Categories;
 using HexagonalSample.Application.PrimaryPorts.CategoryPorts;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace HexagonalSample.WebApi.Controllers
 {
-    //Dikkat ettiyseniz artık Composition Root normal şartlardaki gibi bu katmanda degildir...BUrası sadece bir Controller kütüphanesidir...Geliştirme bu alanda yapılacaktır...Middleware girişlerinden burasının haberi yoktur...Bu size Persistence'tan tamamen izole olmayı saglar..Ve geliştirirken kullanmamanız gereken , Encapsulation'i bozacak tiplerden uzak bir alan saglar...
-
-    [ApiController]
     [Route("api/[controller]")]
-    
+    [ApiController]
     public class CategoryController : ControllerBase
     {
         private readonly ICreateCategoryUseCase _createCategoryUseCase;
+        private readonly IGetAllCategoriesUseCase _getAllCategoriesUseCase;
+        private readonly IGetCategoryByIdUseCase _getCategoryByIdUseCase;
+        private readonly IUpdateCategoryUseCase _updateCategoryUseCase;
+        private readonly IDeleteCategoryUseCase _deleteCategoryUseCase;
 
-        public CategoryController(ICreateCategoryUseCase createCategoryUseCase)
+        public CategoryController(
+            ICreateCategoryUseCase createCategoryUseCase,
+            IGetAllCategoriesUseCase getAllCategoriesUseCase,
+            IGetCategoryByIdUseCase getCategoryByIdUseCase,
+            IUpdateCategoryUseCase updateCategoryUseCase,
+            IDeleteCategoryUseCase deleteCategoryUseCase)
         {
             _createCategoryUseCase = createCategoryUseCase;
+            _getAllCategoriesUseCase = getAllCategoriesUseCase;
+            _getCategoryByIdUseCase = getCategoryByIdUseCase;
+            _updateCategoryUseCase = updateCategoryUseCase;
+            _deleteCategoryUseCase = deleteCategoryUseCase;
         }
 
-        public record CreateCategoryRequest(string Name,string Description);
-
-        [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequest request)
+        // GET: api/Category
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
         {
-            CreateCategoryCommand command = new()
-            {
-                Name = request.Name,
-                Description = request.Description
-            };
+            var categories = await _getAllCategoriesUseCase.ExecuteAsync();
+            return Ok(categories);
+        }
 
-            await _createCategoryUseCase.ExecuteAsync(command);
-            return Ok("Category created");
+        // GET: api/Category/5
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var category = await _getCategoryByIdUseCase.ExecuteAsync(id);
+            if (category == null)
+                return NotFound($"ID'si {id} olan kategori bulunamadı.");
+            
+            return Ok(category);
+        }
+
+        // POST: api/Category
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateCategoryDto dto)
+        {
+            await _createCategoryUseCase.ExecuteAsync(dto);
+            return Ok("Category başarıyla oluşturuldu.");
+        }
+
+        // PUT: api/Category/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateCategoryDto dto)
+        {
+            if (id != dto.Id)
+                return BadRequest("ID uyuşmazlığı.");
+
+            await _updateCategoryUseCase.ExecuteAsync(dto);
+            return Ok("Category başarıyla güncellendi.");
+        }
+
+        // DELETE: api/Category/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            await _deleteCategoryUseCase.ExecuteAsync(id);
+            return Ok("Category başarıyla silindi.");
         }
     }
 }

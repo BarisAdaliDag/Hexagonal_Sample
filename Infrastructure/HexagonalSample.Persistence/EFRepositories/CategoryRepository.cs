@@ -1,4 +1,5 @@
 ﻿using HexagonalSample.Domain.Entities;
+using HexagonalSample.Domain.Enum;
 using HexagonalSample.Domain.SecondaryPorts;
 using HexagonalSample.Persistence.EFData;
 using Microsoft.EntityFrameworkCore;
@@ -25,6 +26,17 @@ namespace HexagonalSample.Persistence.EFRepositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task DeleteAsync(int id)
+        {
+            var category = await _context.Categories.FindAsync(id);
+            if (category != null)
+            {
+                category.DeletedDate = DateTime.Now;
+                category.Status = DataStatus.Deleted;
+                await _context.SaveChangesAsync();
+            }
+        }
+
         public async Task<List<Category>> GetAllAsync()
         {
             return await _context.Categories.ToListAsync();
@@ -33,6 +45,14 @@ namespace HexagonalSample.Persistence.EFRepositories
         public async Task<Category> GetByIdAsync(int id)
         {
             return await _context.Categories.FindAsync(id);
+        }
+
+        public async Task UpdateAsync(Category category)
+        {
+            category.UpdatedDate = DateTime.Now;
+            category.Status = DataStatus.Updated;
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
         }
     }
 }

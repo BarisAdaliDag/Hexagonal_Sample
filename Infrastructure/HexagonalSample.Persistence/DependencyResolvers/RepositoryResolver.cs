@@ -14,8 +14,11 @@ namespace HexagonalSample.Persistence.DependencyResolvers
     {
         public static void AddRepositoryService(this IServiceCollection services)
         {
-            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IAppUserRepository, AppUserRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+            services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
         }
     }
 }

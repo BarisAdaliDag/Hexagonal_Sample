@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace HexagonalSample.Domain.SecondaryPorts
 {
-
-    public interface ICategoryRepository
+    public interface IAppUserRepository
     {
-        Task<List<Category>> GetAllAsync();
-        Task<Category> GetByIdAsync(int id);
-        Task CreateAsync(Category category);
-        Task UpdateAsync(Category category);
+        Task<List<AppUser>> GetAllAsync();
+        Task<AppUser> GetByIdAsync(int id);
+        Task CreateAsync(AppUser appUser);
+        Task UpdateAsync(AppUser appUser);
         Task DeleteAsync(int id);
     }
 }
