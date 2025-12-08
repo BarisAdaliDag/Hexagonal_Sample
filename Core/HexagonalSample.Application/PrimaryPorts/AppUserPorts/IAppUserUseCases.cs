@@ -10,12 +10,12 @@ namespace HexagonalSample.Application.PrimaryPorts.AppUserPorts
 
     public interface IGetAllAppUsersUseCase
     {
-        Task<List<AppUser>> ExecuteAsync();
+        Task<List<AppUserDto>> ExecuteAsync();
     }
 
     public interface IGetAppUserByIdUseCase
     {
-        Task<AppUser> ExecuteAsync(int id);
+        Task<AppUserDto> ExecuteAsync(int id);
     }
 
     public interface IUpdateAppUserUseCase

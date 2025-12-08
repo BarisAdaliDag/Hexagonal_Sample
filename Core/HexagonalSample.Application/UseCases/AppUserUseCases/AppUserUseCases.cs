@@ -37,7 +37,7 @@ namespace HexagonalSample.Application.UseCases.AppUserUseCases
         }
     }
 
-   
+
     public class GetAllAppUsersUseCase : IGetAllAppUsersUseCase
     {
         private readonly IAppUserRepository _repository;
@@ -47,13 +47,21 @@ namespace HexagonalSample.Application.UseCases.AppUserUseCases
             _repository = repository;
         }
 
-        public async Task<List<AppUser>> ExecuteAsync()
+        public async Task<List<AppUserDto>> ExecuteAsync()
         {
-            return await _repository.GetAllAsync();
+            var users = await _repository.GetAllAsync();
+
+            return users.Select(u => new AppUserDto
+            {
+                Id = u.Id,
+                UserName = u.UserName,
+                FirstName = u.AppUserProfile?.FirstName,
+                LastName = u.AppUserProfile?.LastName
+            }).ToList();
         }
     }
 
-    
+
     public class GetAppUserByIdUseCase : IGetAppUserByIdUseCase
     {
         private readonly IAppUserRepository _repository;
@@ -63,13 +71,24 @@ namespace HexagonalSample.Application.UseCases.AppUserUseCases
             _repository = repository;
         }
 
-        public async Task<AppUser> ExecuteAsync(int id)
+        public async Task<AppUserDto> ExecuteAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            var user = await _repository.GetByIdAsync(id);
+
+            if (user == null)
+                return null;
+
+            return new AppUserDto
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.AppUserProfile?.FirstName,
+                LastName = user.AppUserProfile?.LastName
+            };
         }
     }
 
-    
+
     public class UpdateAppUserUseCase : IUpdateAppUserUseCase
     {
         private readonly IAppUserRepository _repository;

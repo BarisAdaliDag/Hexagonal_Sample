@@ -10,12 +10,12 @@ namespace HexagonalSample.Application.PrimaryPorts.ProductPorts
 
     public interface IGetAllProductsUseCase
     {
-        Task<List<Product>> ExecuteAsync();
+        Task<List<ProductDto>> ExecuteAsync();
     }
 
     public interface IGetProductByIdUseCase
     {
-        Task<Product> ExecuteAsync(int id);
+        Task<ProductDto> ExecuteAsync(int id);
     }
 
     public interface IUpdateProductUseCase

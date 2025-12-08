@@ -41,9 +41,18 @@ namespace HexagonalSample.Application.UseCases.ProductUseCases
             _repository = repository;
         }
 
-        public async Task<List<Product>> ExecuteAsync()
+        public async Task<List<ProductDto>> ExecuteAsync()
         {
-            return await _repository.GetAllAsync();
+            var products = await _repository.GetAllAsync();
+
+            return products.Select(p => new ProductDto
+            {
+                Id = p.Id,
+                ProductName = p.ProductName,
+                UnitPrice = p.UnitPrice,
+                CategoryId = p.CategoryId,
+               
+            }).ToList();
         }
     }
 
@@ -57,9 +66,21 @@ namespace HexagonalSample.Application.UseCases.ProductUseCases
             _repository = repository;
         }
 
-        public async Task<Product> ExecuteAsync(int id)
+        public async Task<ProductDto> ExecuteAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            var product = await _repository.GetByIdAsync(id);
+
+            if (product == null)
+                return null;
+
+            return new ProductDto
+            {
+                Id = product.Id,
+                ProductName = product.ProductName,
+                UnitPrice = product.UnitPrice,
+                CategoryId = product.CategoryId,
+               
+            };
         }
     }
 

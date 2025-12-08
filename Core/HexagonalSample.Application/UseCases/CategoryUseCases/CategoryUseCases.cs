@@ -1,4 +1,4 @@
-using HexagonalSample.Application.DtoClasses.Categories;
+﻿using HexagonalSample.Application.DtoClasses.Categories;
 using HexagonalSample.Application.PrimaryPorts.CategoryPorts;
 using HexagonalSample.Domain.Entities;
 using HexagonalSample.Domain.Enum;
